@@ -17,13 +17,11 @@ height: 1000px;
   <body style="margin : 0px; overflow: hidden;">
 
       <model-viewer src="Models/karbas.glb"
-                    poster="Models/karbas.webp" 
-                    
-                   
-                    tone-mapping="neutral" 
-                    shadow-intensity="1" 
-                    ar camera-controls 
-                    touch-action="pan-y" 
+                    poster="Models/karbas.webp"
+                    tone-mapping="neutral"
+                    shadow-intensity="1"
+                    ar camera-controls
+                    touch-action="pan-y"
                     alt="A 3D model carousel">
 
           <button slot="ar-button" id="ar-button">
@@ -40,16 +38,32 @@ height: 1000px;
 
           <div class="slider">
               <div class="slides">
-                  <button class="slide selected" onclick="switchSrc(this, 'Models/shnjacka')" style="background-image: url('Models/shnjacka.webp'); ">
-                  </button><button class="slide" onclick="switchSrc(this, 'Models/karbas')" style="background-image: url('Models/karbas.webp'); ">
-                  </button><button class="slide" onclick="switchSrc(this, 'Models/iolla')" style="background-image: url('Models/iolla.webp'); ">
+                  <button class="slide selected" onclick="switchSrc(this, 'karbas')" style="background-image: url('Models/karbas.webp'); ">
+                  </button><button class="slide" onclick="switchSrc(this, 'shnjacka')" style="background-image: url('Models/shnjacka.webp'); ">
+                  </button><button class="slide" onclick="switchSrc(this, 'iolla')" style="background-image: url('Models/iolla.webp');">
                   
                   </button>
               </div>
           </div>
       </model-viewer>
 
-    
+      <script type="module">
+          const modelViewer = document.querySelector("model-viewer");
+
+          window.switchSrc = (element, name) => {
+              const base = "Models/" + name;
+              modelViewer.src = base + '.glb';
+              modelViewer.poster = base + '.webp';
+              const slides = document.querySelectorAll(".slide");
+              slides.forEach((element) => { element.classList.remove("selected"); });
+              element.classList.add("selected");
+          };
+
+          document.querySelector(".slider").addEventListener('beforexrselect', (ev) => {
+              // Keep slider interactions from affecting the XR scene.
+              ev.preventDefault();
+          });
+      </script>
 
       <style>
           /* This keeps child nodes hidden while the element loads */
