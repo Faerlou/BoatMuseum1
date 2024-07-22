@@ -20,7 +20,7 @@ height: 1000px;
                     poster="logoml.jpg"
                     tone-mapping="neutral"
                     shadow-intensity="1"
-                    ar ar-placement="wall"
+                    
                     ar camera-controls
                     touch-action="pan-y"
                     alt="A 3D model carousel">
@@ -38,7 +38,6 @@ height: 1000px;
                   <button class="slide selected" onclick="switchSrc(this, 'karbas')" style="background-image: url('Models/karbas.webp'); ">
                   </button><button class="slide" onclick="switchSrc(this, 'shnjacka')" style="background-image: url('Models/shnjacka.webp'); ">
                   </button><button class="slide" onclick="switchSrc(this, 'iolla')" style="background-image: url('Models/iolla.webp');">
-                  
                   </button>
               </div>
           </div>
@@ -59,6 +58,18 @@ height: 1000px;
           document.querySelector(".slider").addEventListener('beforexrselect', (ev) => {
               // Keep slider interactions from affecting the XR scene.
               ev.preventDefault();
+          });
+      </script>
+
+      <script>
+          document.querySelector("#model-viewer").addEventListener('ar-status', (event) => {
+              if (event.detail.status === 'failed') {
+                  const error = document.querySelector("#error");
+                  error.classList.remove('hide');
+                  error.addEventListener('transitionend', (event) => {
+                      error.classList.add('hide');
+                  });
+              }
           });
       </script>
 
