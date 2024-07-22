@@ -15,81 +15,190 @@ height: 1000px;
   </style>
   
   <body style="margin : 0px; overflow: hidden;">
-    
-    <model-viewer 
-     src="shnjacka.glb"
-     <model-viewer src="shnjacka.glb" poster="logoml.jpg" ar ar-placement="wall" camera-controls touch-action="pan-y" alt="A 3D model of some wall art">
-      <button 
-    slot="ar-button" 
-    style="background-image: url('button.png');
-        background-size: cover;
-        width: 150px;
-        height: 150px;
-    margin-right: 10px;
-    border: none;
-     border-radius: 100px;
-   margin: 50px auto 100px;
-   display: block;">
-  </button>
-    </model-viewer>
-  
 
-<model-viewer id="model-viewer"
-  src="shnjacka.glb"
-  
-  ar ar-modes="scene-viewer webxr"
-  camera-controls touch-action="pan-y"
-  alt="A 3D model of an astronaut" shadow-intensity="2"
- 
-  
- <!-- skybox-image="../../shared-assets/environments/spruit_sunrise_1k_HDR.jpg"
- skybox-height="2m" max-camera-orbit="auto 90deg auto"> -->
-  
-  
-  <div id="error" class="hide">AR is not supported on this device</div>
-  <button 
-    slot="ar-button" 
-    style="background-image: url('button2.png');
-        background-size: cover;
-        width: 150px;
-        height: 150px;
-    margin-right: 10px;
-    border: none;
-     border-radius: 100px;
-   margin: 50px auto 100px;
-   display: block;">
-  </button>
-    </model-viewer>
-</model-viewer>
+      <model-viewer src="Models/shnjacka.glb" 
+                    poster="Models/shnjacka.webp" 
+                    tone-mapping="neutral" 
+                    shadow-intensity="1" 
+                    ar camera-controls 
+                    touch-action="pan-y" 
+                    alt="A 3D model carousel">
 
-    
-<script>
-  document.querySelector("#model-viewer").addEventListener('ar-status', (event) => {
-    if(event.detail.status === 'failed'){
-      const error = document.querySelector("#error");
-      error.classList.remove('hide');
-      error.addEventListener('transitionend',(event) => {
-        error.classList.add('hide');
-      });
-    }
-  });
-</script>
-<style>
-  #error {
-    background-color: #ffffffdd;
-    border-radius: 16px;
-    padding: 16px;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate3d(-50%, -50%, 0);
-    transition: opacity 0.3s;
-  }
-  #error.hide {
-    opacity: 0;
-    visibility: hidden;
-    transition: visibility 2s, opacity 1s 1s;
-  }
-</style>
-</body>
+          <button slot="ar-button" id="ar-button">
+              View in your space
+          </button>
+
+          <div id="ar-prompt">
+              <img src="logoml.jpg">
+          </div>
+
+          <button id="ar-failure">
+              AR is not tracking!
+          </button>
+
+          <div class="slider">
+              <div class="slides">
+                  <button class="slide selected" onclick="switchSrc(this, 'Models/shnjacka')" style="background-image: url('Models/shnjacka.webp'); ">
+                  </button><button class="slide" onclick="switchSrc(this, 'Models/karbas')" style="background-image: url('Models/karbas.webp'); ">
+                  </button><button class="slide" onclick="switchSrc(this, 'Models/iolla')" style="background-image: url('Models/iolla.webp'); ">
+                  
+                  </button>
+              </div>
+          </div>
+      </model-viewer>
+
+      <script type="module">
+          const modelViewer = document.querySelector("model-viewer");
+
+          window.switchSrc = (element, name) => {
+              const base = "Models/" + name;
+              modelViewer.src = base + '.glb';
+              modelViewer.poster = base + '.webp';
+              const slides = document.querySelectorAll(".slide");
+              slides.forEach((element) => { element.classList.remove("selected"); });
+              element.classList.add("selected");
+          };
+
+          document.querySelector(".slider").addEventListener('beforexrselect', (ev) => {
+              // Keep slider interactions from affecting the XR scene.
+              ev.preventDefault();
+          });
+      </script>
+
+      <style>
+          /* This keeps child nodes hidden while the element loads */
+          :not(:defined) > * {
+              display: none;
+          }
+
+          model-viewer {
+              background-color: #eee;
+              overflow-x: hidden;
+          }
+
+          #ar-button {
+              background-image: url(butblack.png);
+              background-repeat: no-repeat;
+              background-size: 20px 20px;
+              background-position: 12px 50%;
+              background-color: #fff;
+              position: absolute;
+              left: 50%;
+              transform: translateX(-50%);
+              white-space: nowrap;
+              bottom: 132px;
+              padding: 0px 16px 0px 40px;
+              font-family: Roboto Regular, Helvetica Neue, sans-serif;
+              font-size: 14px;
+              color: #4285f4;
+              height: 36px;
+              line-height: 36px;
+              border-radius: 18px;
+              border: 1px solid #DADCE0;
+          }
+
+              #ar-button:active {
+                  background-color: #E8EAED;
+              }
+
+              #ar-button:focus {
+                  outline: none;
+              }
+
+              #ar-button:focus-visible {
+                  outline: 1px solid #4285f4;
+              }
+
+          @keyframes circle {
+              from {
+                  transform: translateX(-50%) rotate(0deg) translateX(50px) rotate(0deg);
+              }
+
+              to {
+                  transform: translateX(-50%) rotate(360deg) translateX(50px) rotate(-360deg);
+              }
+          }
+
+          @keyframes elongate {
+              from {
+                  transform: translateX(100px);
+              }
+
+              to {
+                  transform: translateX(-100px);
+              }
+          }
+
+          model-viewer > #ar-prompt {
+              position: absolute;
+              left: 50%;
+              bottom: 175px;
+              animation: elongate 2s infinite ease-in-out alternate;
+              display: none;
+          }
+
+          model-viewer[ar-status="session-started"] > #ar-prompt {
+              display: block;
+          }
+
+          model-viewer > #ar-prompt > img {
+              animation: circle 4s linear infinite;
+          }
+
+          model-viewer > #ar-failure {
+              position: absolute;
+              left: 50%;
+              transform: translateX(-50%);
+              bottom: 175px;
+              display: none;
+          }
+
+          model-viewer[ar-tracking="not-tracking"] > #ar-failure {
+              display: block;
+          }
+
+          .slider {
+              width: 100%;
+              text-align: center;
+              overflow: hidden;
+              position: absolute;
+              bottom: 16px;
+          }
+
+          .slides {
+              display: flex;
+              overflow-x: auto;
+              scroll-snap-type: x mandatory;
+              scroll-behavior: smooth;
+              -webkit-overflow-scrolling: touch;
+          }
+
+          .slide {
+              scroll-snap-align: start;
+              flex-shrink: 0;
+              width: 100px;
+              height: 100px;
+              background-size: contain;
+              background-repeat: no-repeat;
+              background-position: center;
+              background-color: #fff;
+              margin-right: 10px;
+              border-radius: 10px;
+              border: none;
+              display: flex;
+          }
+
+              .slide.selected {
+                  border: 2px solid #4285f4;
+              }
+
+              .slide:focus {
+                  outline: none;
+              }
+
+              .slide:focus-visible {
+                  outline: 1px solid #4285f4;
+              }
+      </style>
+  </body>
 </html>
